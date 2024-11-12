@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,5 +22,4 @@ public class PurchaseHistory {
     private Book book;
 
     private LocalDateTime purchaseDate;
-
 }
