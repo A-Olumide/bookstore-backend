@@ -38,17 +38,30 @@ public class BookController {
         return ResponseEntity.ok(books);
     }
 
-    @GetMapping("/search/authors")
+    @GetMapping("search/authors")
     public ResponseEntity<List<BookDto>> searchBooksByAuthor(@RequestParam String author){
       List<BookDto> books = bookService.searchBooksByAuthor(author);
       return ResponseEntity.ok(books);
     }
 
-    @GetMapping("/search/title")
+    @GetMapping("search/title")
     public ResponseEntity<List<BookDto>> searchBookByTitle(@RequestParam String title){
         List<BookDto> books = bookService.searchBookByTitle(title);
         return ResponseEntity.ok(books);
     }
+
+    @GetMapping("search/genre")
+    public ResponseEntity<List<BookDto>> searchBookByGenre(@RequestParam String genre){
+       List<BookDto> books = bookService.searchBooksByGenre(genre);
+       return ResponseEntity.ok(books);
+    }
+    @GetMapping("search/year")
+    public ResponseEntity<List<BookDto>> searchBookByYear(@RequestParam int year){
+       List<BookDto> book = bookService.searchBooksByYear(year);
+       return ResponseEntity.ok(book);
+    }
+
+
 
 
 }
