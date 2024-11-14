@@ -10,4 +10,5 @@ public interface CartService {
     CartItemDto addBookToCart(CartItemCreationDto cartItemCreationDto);
     List<CartItemDto> viewCart();
     void removeBookFromCart(Long cartItemId);
+    void checkOut();
 }

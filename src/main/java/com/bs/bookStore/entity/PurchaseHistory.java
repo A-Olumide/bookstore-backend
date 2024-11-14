@@ -21,5 +21,7 @@ public class PurchaseHistory {
     @JoinColumn(name = "book_id")
     private Book book;
 
+    private int quantity;
+
     private LocalDateTime purchaseDate;
 }
