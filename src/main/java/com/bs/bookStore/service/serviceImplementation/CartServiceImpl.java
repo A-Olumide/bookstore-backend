@@ -61,10 +61,6 @@ public class CartServiceImpl implements CartService {
         cartItemRepository.deleteById(cartItemId);
     }
 
-//    @Override
-//    public void checkOut(String paymentMethod) {
-//
-//    }
 
     @Override
     @Transactional
