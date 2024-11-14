@@ -11,11 +11,14 @@ import java.util.List;
 @Service
 public class PurchaseHistoryServiceImpl implements PurchaseHistoryService {
 
-    @Autowired
-    private PurchaseHistoryRepository purchaseHistoryRepository;
+    private final PurchaseHistoryRepository purchaseHistoryRepository;
+
+    public PurchaseHistoryServiceImpl(PurchaseHistoryRepository purchaseHistoryRepository) {
+        this.purchaseHistoryRepository = purchaseHistoryRepository;
+    }
+
     @Override
     public List<PurchaseHistory> getAllPurchases() {
         return purchaseHistoryRepository.findAll();
     }
 }
-g
