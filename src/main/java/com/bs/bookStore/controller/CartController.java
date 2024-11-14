@@ -36,9 +36,9 @@ public class CartController {
         return ResponseEntity.ok(cartService.viewCart());
     }
 
-    @DeleteMapping("/remove/{bookId}")
-    public ResponseEntity<ResponseDto> removeBookFromCart(@PathVariable Long bookId) {
-        cartService.removeBookFromCart(bookId);
+    @DeleteMapping("/remove/{cartItemId}")
+    public ResponseEntity<ResponseDto> removeBookFromCart(@PathVariable Long cartItemId) {
+        cartService.removeBookFromCart(cartItemId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseDto(StoreConstants.STATUS_200, StoreConstants.MESSAGE_200));
