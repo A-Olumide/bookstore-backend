@@ -1,24 +1,28 @@
 package com.bs.bookStore.service.serviceImplementation;
 
+import com.bs.bookStore.dto.PurchaseHistoryDto;
 import com.bs.bookStore.entity.PurchaseHistory;
 import com.bs.bookStore.repository.PurchaseHistoryRepository;
 import com.bs.bookStore.service.PurchaseHistoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
+@AllArgsConstructor
 public class PurchaseHistoryServiceImpl implements PurchaseHistoryService {
 
-    private final PurchaseHistoryRepository purchaseHistoryRepository;
-
-    public PurchaseHistoryServiceImpl(PurchaseHistoryRepository purchaseHistoryRepository) {
-        this.purchaseHistoryRepository = purchaseHistoryRepository;
-    }
+    private PurchaseHistoryRepository purchaseHistoryRepository;
+    private ModelMapper modelMapper;
 
     @Override
-    public List<PurchaseHistory> getAllPurchases() {
-        return purchaseHistoryRepository.findAll();
+    public Page<PurchaseHistoryDto> getAllPurchases(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        Page<PurchaseHistory> purchaseHistoryPage = purchaseHistoryRepository.findAll(pageable);
+        return purchaseHistoryPage.map(purchaseHistory -> modelMapper.map(purchaseHistory, PurchaseHistoryDto.class));
     }
 }

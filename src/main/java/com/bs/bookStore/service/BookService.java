@@ -1,21 +1,16 @@
 package com.bs.bookStore.service;
 
 import com.bs.bookStore.dto.BookDto;
-import com.bs.bookStore.entity.Book;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface BookService {
 
     BookDto addBook(BookDto bookDto);
 
-    List<BookDto> getAllBooks();
+    Page<BookDto> getAllBooks(int pageNo, int pageSize);
 
-    List<BookDto> searchBooksByAuthor(String author);
+   Page<BookDto> searchBooks(String title, String author, String genre, Integer year, Pageable pageable);
 
-    List<BookDto> searchBookByTitle(String title);
 
-    List<BookDto> searchBooksByGenre(String genre);
-
-    List<BookDto> searchBooksByYear(int year);
 }

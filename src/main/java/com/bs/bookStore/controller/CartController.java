@@ -1,12 +1,10 @@
 package com.bs.bookStore.controller;
 
 import com.bs.bookStore.constants.StoreConstants;
-import com.bs.bookStore.dto.BookDto;
 import com.bs.bookStore.dto.CartItemCreationDto;
 import com.bs.bookStore.dto.CartItemDto;
 import com.bs.bookStore.dto.ResponseDto;
 import com.bs.bookStore.service.CartService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,25 +21,33 @@ public class CartController {
 
     @PostMapping("add")
     public ResponseEntity<ResponseDto> addBookToCart(@RequestBody CartItemCreationDto cartItemCreationDto){
-        cartService.addBookToCart(cartItemCreationDto);
-        String successMessage = StoreConstants.getBookAddedMessage(cartItemCreationDto.getBookTitle());
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ResponseDto(StoreConstants.STATUS_201, successMessage));
+       CartItemDto cartItemDto = cartService.addBookToCart(cartItemCreationDto);
+        ResponseDto<CartItemDto> responseDto = new ResponseDto<>(
+                HttpStatus.CREATED,
+                StoreConstants.STATUS_201,
+                StoreConstants.MESSAGE_201,
+                cartItemDto
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @GetMapping("view")
-    public ResponseEntity<List<CartItemDto>> viewCart(){
-
-        return ResponseEntity.ok(cartService.viewCart());
+    public ResponseEntity<ResponseDto<List<CartItemDto>>> viewCart(){
+        List<CartItemDto> items = cartService.viewCart();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ResponseDto<>(HttpStatus.OK, StoreConstants.STATUS_200, StoreConstants.MESSAGE_200, items));
     }
 
     @DeleteMapping("/remove/{cartItemId}")
     public ResponseEntity<ResponseDto> removeBookFromCart(@PathVariable Long cartItemId) {
         cartService.removeBookFromCart(cartItemId);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ResponseDto(StoreConstants.STATUS_200, StoreConstants.MESSAGE_200));
+        ResponseDto<Void> responseDto = new ResponseDto<>(
+                HttpStatus.OK,
+                StoreConstants.STATUS_200,
+                StoreConstants.MESSAGE_200,
+                null
+        );
+        return ResponseEntity.ok(responseDto);
     }
-
 }

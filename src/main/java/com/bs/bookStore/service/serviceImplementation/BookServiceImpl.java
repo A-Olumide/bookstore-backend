@@ -6,13 +6,14 @@ import com.bs.bookStore.exceptions.BookAlreadyExistsException;
 import com.bs.bookStore.exceptions.ResourceNotFoundException;
 import com.bs.bookStore.repository.BookRepository;
 import com.bs.bookStore.service.BookService;
+import com.bs.bookStore.utils.BookSpecification;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -32,48 +33,62 @@ public class BookServiceImpl implements BookService {
         return modelMapper.map(book, BookDto.class);
     }
     @Override
-    public List<BookDto> getAllBooks() {
-       List<Book> bookList = bookRepository.findAll();
-        return bookList.stream().map(book -> modelMapper.map(book, BookDto.class))
-                .collect(Collectors.toList());
-    }
-    @Override
-    public List<BookDto> searchBooksByAuthor(String author) {
-        List<Book> books = bookRepository.findByAuthorContainingIgnoreCase(author);
-        if(books.isEmpty()){
-            throw new ResourceNotFoundException("Book", "Author", author);
+    public Page<BookDto> getAllBooks(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        // Get the total number of books in the repository
+        long totalBooks = bookRepository.count();
+
+        // Calculate the maximum number of pages
+        int maxPages = (int) Math.ceil((double) totalBooks / pageSize);
+
+        // Check if the requested page number exceeds the maximum number of pages.
+        // If so, adjust the pageable to point to the last available page
+        if(pageNo >= maxPages & maxPages > 0){
+            pageable = PageRequest.of(maxPages - 1, pageSize);
         }
-        return books.stream().map(book -> modelMapper.map(book, BookDto.class))
-                .collect(Collectors.toList());
+
+        Page<Book> bookPage = bookRepository.findAll(pageable);
+        return bookPage.map(book -> modelMapper.map(book, BookDto.class));
     }
 
     @Override
-    public List<BookDto> searchBookByTitle(String title) {
-        List<Book> books = bookRepository.findByTitleContainingIgnoreCase(title);
-        if(books.isEmpty()){
-            throw new ResourceNotFoundException("Book", "Title", title);
+    public Page<BookDto> searchBooks(String title, String author, String genre, Integer year, Pageable pageable) {
+        Specification<Book> spec = Specification.where(null);
+
+        if (author != null && !author.isEmpty()) {
+            spec = spec.and(BookSpecification.hasAuthor(author));
         }
-        return books.stream().map(book -> modelMapper.map(book, BookDto.class))
-                .collect(Collectors.toList());
+        if (title != null && !title.isEmpty()) {
+            spec = spec.and(BookSpecification.hasTitle(title));
+        }
+        if (genre != null && !genre.isEmpty()) {
+            spec = spec.and(BookSpecification.hasGenre(genre));
+        }
+        if (year != null) {
+            spec = spec.and(BookSpecification.hasYear(year));
+        }
+
+        boolean anyMatch = bookRepository.exists(spec);
+        if(!anyMatch){
+            throw new ResourceNotFoundException("Book", "Search Criteria", "No matching books found");
+        }
+
+        long totalBooks = bookRepository.count(spec);
+
+        int pageSize = pageable.getPageSize();
+        int maxPages = (int) Math.ceil((double) totalBooks / pageSize);
+
+        int requestedPageNo = pageable.getPageNumber();
+
+        if (requestedPageNo >= maxPages) {
+            pageable = PageRequest.of(maxPages - 1, pageSize);
+        }
+
+        Page<Book> booksPage = bookRepository.findAll(spec, pageable);
+
+        return booksPage.map(book -> modelMapper.map(book, BookDto.class));
+
     }
 
-    @Override
-    public List<BookDto> searchBooksByGenre(String genre) {
-       List<Book> books = bookRepository.findByGenreIgnoreCase(genre);
-       if(books.isEmpty()){
-           throw new ResourceNotFoundException("Book", "Genre", genre);
-       }
-        return books.stream().map(book -> modelMapper.map(book, BookDto.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<BookDto> searchBooksByYear(int year) {
-       List<Book> books = bookRepository.findByPublicationYear(year);
-       if(books.isEmpty()){
-           throw new ResourceNotFoundException("Book", "Year", String.valueOf(year));
-       }
-        return books.stream().map(book -> modelMapper.map(book, BookDto.class))
-                .collect(Collectors.toList());
-    }
 }

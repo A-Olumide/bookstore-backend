@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,50 +35,62 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
     }
 
+
+
+    @ExceptionHandler(InvalidIsbnException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidIsbnException(InvalidIsbnException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BookstoreException.class)
+    public ResponseEntity<Object> handleBookstoreException(BookstoreException ex) {
+        return new ResponseEntity<>("Exception", HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDto> handleGlobalException(Exception exception,
-                                                                  WebRequest webRequest) {
+    public ResponseEntity<ErrorResponseDto> handleGlobalException(Exception exception) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-                webRequest.getDescription(false),
+//
                 HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 exception.getMessage(),
-                LocalDateTime.now()
+                null
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(BookAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponseDto> handleBookAlreadyExistsException(BookAlreadyExistsException exception,
-                                                                                 WebRequest webRequest){
+    public ResponseEntity<ErrorResponseDto> handleBookAlreadyExistsException(BookAlreadyExistsException exception){
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-                webRequest.getDescription(false),
                 HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST.value(),
                 exception.getMessage(),
-                LocalDateTime.now()
+                null
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(ResourceNotFoundException exception,
-                                                                            WebRequest webRequest){
+    public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(ResourceNotFoundException exception){
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-                webRequest.getDescription(false),
                 HttpStatus.NOT_FOUND,
+                HttpStatus.NOT_FOUND.value(),
                 exception.getMessage(),
-                LocalDateTime.now()
+                null
         );
+
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(CartEmptyException.class)
-    public ResponseEntity<ErrorResponseDto> handleCartEmptyException(CartEmptyException exception,
-                                                                            WebRequest webRequest){
+    public ResponseEntity<ErrorResponseDto> handleCartEmptyException(CartEmptyException exception){
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-                webRequest.getDescription(false),
                 HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST.value(),
                 exception.getMessage(),
-                LocalDateTime.now()
+                null
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
