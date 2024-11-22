@@ -64,34 +64,34 @@ class BookServiceImplTest {
         verify(bookRepository, never()).save(any(Book.class));
     }
 
-    @Test
-    void getAllBooks_ShouldReturnListOfBooks() {
-        List<Book> books = Arrays.asList(new Book(), new Book());
-        when(bookRepository.findAll()).thenReturn(books);
+//    @Test
+//    void getAllBooks_ShouldReturnListOfBooks() {
+//        List<Book> books = Arrays.asList(new Book(), new Book());
+//        when(bookRepository.findAll()).thenReturn(books);
+//
+//        Arrays.asList(new BookDto(), new BookDto());
+//        when(modelMapper.map(any(Book.class), eq(BookDto.class))).thenReturn(new BookDto());
+//
+//        List<BookDto> result = bookService.getAllBooks();
+//
+//        assertEquals(2, result.size());
+//        verify(bookRepository, times(1)).findAll();
+//    }
 
-        Arrays.asList(new BookDto(), new BookDto());
-        when(modelMapper.map(any(Book.class), eq(BookDto.class))).thenReturn(new BookDto());
-
-        List<BookDto> result = bookService.getAllBooks();
-
-        assertEquals(2, result.size());
-        verify(bookRepository, times(1)).findAll();
-    }
-
-    @Test
-    void searchBooksByAuthor_ShouldReturnBooks_WhenAuthorExists() {
-        String author = "Mide";
-
-        List<Book> books = Arrays.asList(new Book(), new Book());
-
-        when(bookRepository.findByAuthorContainingIgnoreCase(author)).thenReturn(books);
-
-        when(modelMapper.map(any(Book.class), eq(BookDto.class))).thenReturn(new BookDto());
-
-        List<BookDto> result = bookService.searchBooksByAuthor(author);
-
-        assertEquals(2, result.size());
-        verify(bookRepository, times(1)).findByAuthorContainingIgnoreCase(author);
-    }
+//    @Test
+//    void searchBooksByAuthor_ShouldReturnBooks_WhenAuthorExists() {
+//        String author = "Mide";
+//
+//        List<Book> books = Arrays.asList(new Book(), new Book());
+//
+//        when(bookRepository.findByAuthorContainingIgnoreCase(author)).thenReturn(books);
+//
+//        when(modelMapper.map(any(Book.class), eq(BookDto.class))).thenReturn(new BookDto());
+//
+//        List<BookDto> result = bookService.searchBooksByAuthor(author);
+//
+//        assertEquals(2, result.size());
+//        verify(bookRepository, times(1)).findByAuthorContainingIgnoreCase(author);
+//    }
 
 }

@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.validator.routines.ISBNValidator;
+import org.springframework.validation.method.MethodValidationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Entity
 @AllArgsConstructor
@@ -23,4 +26,13 @@ public class Book {
     private String genre;
     private String isbn;
     private int publicationYear;
+
+//    public void setIsbn(String isbn) {
+//        if(ISBNValidator.getInstance().isValid(isbn)){
+//            this.isbn = isbn;
+//        } else {
+//            throw new IllegalArgumentException("Invalid Isbn format");
+//        }
+//
+//    }
 }
